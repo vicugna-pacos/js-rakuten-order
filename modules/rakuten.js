@@ -1,9 +1,18 @@
 const puppeteer = require('puppeteer-core');
 
-// 検索結果のURL　s=2は安い順を指定している
+// 検索結果のURL　s=2は安い順
 const SEARCH_URL = "https://search.rakuten.co.jp/search/mall/[word]/?s=2&sid=[sid]";
 
-module.exports.order = async function(page, param) {
+/**
+商品検索→カートに追加
+
+@param page puppeteerのPageオブジェクト
+@param param カートに入れたい商品の情報
+  word : 検索ワード
+  sid : ショップ番号
+  units : 数量
+*/
+module.exports.addCart = async function(page, param) {
 
     try {
         // 検索
@@ -41,3 +50,5 @@ module.exports.order = async function(page, param) {
 
     return true;
 };
+
+
