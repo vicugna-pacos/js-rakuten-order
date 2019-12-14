@@ -1,0 +1,19 @@
+{
+  "name": "js-rakuten-order",
+  "version": "1.0.0",
+  "description": "日用品を楽天で検索してカートに入れる",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vicugna-pacos/js-rakuten-order.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vicugna-pacos/js-rakuten-order/issues"
+  },
+  "homepage": "https://github.com/vicugna-pacos/js-rakuten-order#readme"
+}
