@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/vicugna-pacos/js-rakuten-order/issues"
   },
-  "homepage": "https://github.com/vicugna-pacos/js-rakuten-order#readme"
+  "homepage": "https://github.com/vicugna-pacos/js-rakuten-order#readme",
+  "dependencies": {
+    "puppeteer-core": "^2.0.0"
+  }
 }
