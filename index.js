@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer-core');
 const rakuten = require('./modules/rakuten.js');
+const goods = require('./modules/goods.js');
 
 (async () => {
     const LAUNCH_OPTION = {
@@ -14,10 +15,12 @@ const rakuten = require('./modules/rakuten.js');
     try {
         const page = await browser.newPage();   // 新しいタブを開く
 
-        // ログイン
+        // 商品リストを開く
+        goods.open();
+
+        // 楽天市場にログイン
         await rakuten.login(page);
-
-
+        
         let param = {};
         param["word"] = "ティッシュ";
         param["sid"] = "261122";
