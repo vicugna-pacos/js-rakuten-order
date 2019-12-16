@@ -36,16 +36,20 @@ const shopping_list = require("./modules/shopping_list.js");
 
         while(shopping_item != null) {
             // 商品リストを探す
-            let param = goods.search(shopping_item.key);
-            //param["word"] = "ティッシュ";
-            //param["sid"] = "261122";
-            //param["units"] = 2;
+            let founds = goods.search(shopping_item.key);
 
-            let succeed = await rakuten.addCart(page, param);
+            for (let found in founds) {
+                //param["word"] = "ティッシュ";
+                //param["sid"] = "261122";
+                //param["units"] = 2;
 
-            if (succeed) {
-                // 完了にする
-                await shopping_list.done(page);
+                let succeed = await rakuten.addCart(page, found);
+
+                if (succeed) {
+                    // 完了にする
+                    await shopping_list.done(page);
+                    break;
+                }
             }
 
             // 次
