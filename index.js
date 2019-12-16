@@ -13,7 +13,7 @@ const goods = require("./modules/goods.js");
        ,executablePath : "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
     };
 
-    if (config.chrome.executablePath) {
+    if (config["chrome"] && config["chrome"]["executablePath"] && config["chrome"]["executablePath"] != "") {
         LAUNCH_OPTION.executablePath = config.chrome.executablePath;
     }
 
