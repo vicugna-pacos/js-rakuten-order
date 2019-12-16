@@ -27,3 +27,20 @@ Excel(タブ区切りの方がよい？)
 
 「名前」が同一の行を複数設定できる。その場合、上から順番にカートに入れられるかどうかを試し、成功したらそこで終了する。
 (あるお店で商品が品切れだった場合に、別のお店で注文するようにできる)
+
+# 設定ファイル
+
+```サンプル
+{
+    "rakuten" : {
+        "user_id" : ""
+        , "password" : ""
+    }
+    , "goods" : {
+        "path" : "goods.xlsx"
+    }
+    , "chrome" : {
+        "executablePath" : "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
+    }
+}
+```
