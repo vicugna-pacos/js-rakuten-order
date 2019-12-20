@@ -1,62 +1,59 @@
 const puppeteer = require("puppeteer-core");
 const config = require("config");
 const rakuten = require("./modules/rakuten.js");
-const goods = require("./modules/goods.js");
-const shopping_list = require("./modules/shopping_list.js");
+const spreadsheet = require("./modules/spreadsheet.js");
 
 (async () => {
 
 	// キャッチされなかったPromiseのエラー詳細を出してくれる
 	process.on("unhandledRejection", console.dir);
-   
-    let LAUNCH_OPTION = {
-        headless : false
-       ,executablePath : "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
-    };
 
-    if (config["chrome"] && config["chrome"]["executablePath"] && config["chrome"]["executablePath"] != "") {
-        LAUNCH_OPTION.executablePath = config.chrome.executablePath;
-    }
+	let LAUNCH_OPTION = {
+		headless: false
+		, executablePath: "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
+	};
 
-    const browser = await puppeteer.launch(LAUNCH_OPTION);
-    
-    try {
-        const page = await browser.newPage();   // 新しいタブを開く
+	if (config["chrome"] && config["chrome"]["executablePath"] && config["chrome"]["executablePath"] != "") {
+		LAUNCH_OPTION.executablePath = config.chrome.executablePath;
+	}
 
-        // 楽天市場にログイン
-        await rakuten.login(page);
+	const browser = await puppeteer.launch(LAUNCH_OPTION);
 
-        // 商品リストを開く
-        goods.open();
+	try {
+		// スプレッドシートから買い物リストと商品リストを取得
+		await spreadsheet.init();
 
-        // 買い物リストを開く
-        await shopping_list.open(page);
+		let todos = spreadsheet.getTodo();
+		let items = spreadsheet.getItems();
 
-        let shopping_item = await shopping_list.next(page);
+		// ブラウザを起動してログイン
+		const page = await browser.newPage();
+		await rakuten.login(page);
 
-        while(shopping_item != null) {
-            // 商品リストを探す
-            let founds = goods.search(shopping_item.key);
+		// 買い物リストのループ
+		for (let todo of todos.values) {
+			if (!todo[0]) {
+				continue;
+			}
 
-            for (let found in founds) {
-                //param["word"] = "ティッシュ";
-                //param["sid"] = "261122";
-                //param["units"] = 2;
+			// 商品リストを探す
+			let founds = searchItems(todo[1], items);
 
-                let succeed = await rakuten.addCart(page, found);
+			for (let found in founds) {
+				//param["word"] = "ティッシュ";
+				//param["sid"] = "261122";
+				//param["units"] = 2;
 
-                if (succeed) {
-                    // 完了にする
-                    await shopping_list.done(page);
-                    break;
-                }
-            }
+				let succeed = await rakuten.addCart(page, found);
 
-            // 次
-            shopping_item = await shopping_list.next(page);
-        }
+				if (succeed) {
+					// TODO 完了にする
+					break;
+				}
+			}
+		}
 
-    } finally {
-        browser.close();
-    }
+	} finally {
+		browser.close();
+	}
 })();
