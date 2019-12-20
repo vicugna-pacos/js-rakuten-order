@@ -64,14 +64,14 @@ async function getNewToken() {
  * 買うものリスト取得
  */
 module.exports.getTodo = async function() {
-    return await getSheetData(config.spreadsheet.sheetname_todo);
+    return await getSheetData(config.spreadsheet.todo.sheetName);
 }
 
 /**
  * 商品リスト取得
  */
 module.exports.getItems = async function() {
-    return await getSheetData(config.spreadsheet.sheetname_items);
+    return await getSheetData(config.spreadsheet.items.sheetName);
 }
 
 /**
@@ -89,3 +89,21 @@ async function getSheetData(sheetName){
     let response = await sheets.spreadsheets.values.get(param);
     return response.data;
 }
+
+module.exports.updateTodo = async function(rowIndex) {
+    const sheetName = config.spreadsheet.todo.sheetName;
+    const range = sheetName + "!A" + String(rowIndex + 1);
+    const sheets = google.sheets({version: "v4"});
+    const param = {
+        spreadsheetId: config.spreadsheet.id,
+        range: range,
+        valueInputOption: "USER_ENTERED",
+        resource : {
+            values : [["FALSE"]]
+        },
+        auth : oAuth2Client
+    };
+
+    await sheets.spreadsheets.values.update(param);
+
+};

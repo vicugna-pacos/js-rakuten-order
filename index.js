@@ -31,7 +31,9 @@ const spreadsheet = require("./modules/spreadsheet.js");
 		await rakuten.login(page);
 
 		// 買い物リストのループ
-		for (let todo of todos.values) {
+		for (let todoIndex = 0; todoIndex < todos.values.length; todoIndex++) {
+			let todo = todos.values[todoIndex];
+
 			if (todo[0] != "TRUE") {
 				continue;
 			}
@@ -44,6 +46,7 @@ const spreadsheet = require("./modules/spreadsheet.js");
 
 				if (succeed) {
 					// TODO 完了にする
+					await spreadsheet.updateTodo(todoIndex);
 					break;
 				}
 			}
