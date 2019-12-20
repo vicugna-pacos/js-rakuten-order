@@ -65,5 +65,5 @@ module.exports.login = async function(page) {
 
     // ログインボタンを押す
     await page.click("input[name=submit].loginButton");
-    await page.waitForNavigation({waitUntil:"domcontentloaded"});
+    await page.waitFor(1000);
 };

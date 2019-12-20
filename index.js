@@ -23,8 +23,8 @@ const spreadsheet = require("./modules/spreadsheet.js");
 		// スプレッドシートから買い物リストと商品リストを取得
 		await spreadsheet.init();
 
-		let todos = spreadsheet.getTodo();
-		let items = spreadsheet.getItems();
+		let todos = await spreadsheet.getTodo();
+		let items = await spreadsheet.getItems();
 
 		// ブラウザを起動してログイン
 		const page = await browser.newPage();
@@ -32,14 +32,14 @@ const spreadsheet = require("./modules/spreadsheet.js");
 
 		// 買い物リストのループ
 		for (let todo of todos.values) {
-			if (!todo[0]) {
+			if (todo[0] != "TRUE") {
 				continue;
 			}
 
 			// 商品リストを探す
 			let founds = searchItems(todo[1], items);
 
-			for (let found in founds) {
+			for (let found of founds) {
 				let succeed = await rakuten.addCart(page, found);
 
 				if (succeed) {
