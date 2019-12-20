@@ -60,8 +60,8 @@ module.exports.login = async function(page) {
     await page.goto(LOGIN_URL, {waitUntil:"domcontentloaded"});
 
     // IDとパスワードを入力する
-    await page.type("#loginInner_u", config.rakuten.user_id, {delay:200});
-    await page.type("#loginInner_p", config.rakuten.user_id, {delay:200});
+    await page.type("#loginInner_u", config.rakuten.user_id, {delay:50});
+    await page.type("#loginInner_p", config.rakuten.password, {delay:50});
 
     // ログインボタンを押す
     await page.click("input[name=submit].loginButton");
