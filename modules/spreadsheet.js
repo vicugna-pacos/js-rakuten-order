@@ -31,14 +31,12 @@ module.exports.init = async function() {
     
     oAuth2Client.setCredentials(token);
 
-    // データ読込
-    await readTodo();
 };
 
 /**
  * 新しいトークンを取得する
  */
-function getNewToken() {
+async function getNewToken() {
     const authUrl = oAuth2Client.generateAuthUrl({
         access_type: "offline",
         scope: SCOPES});
@@ -51,7 +49,7 @@ function getNewToken() {
     });
 
     return new Promise(function(resolve, reject) {
-        rl.question("承認後に表示されたコードを入力してください：", (code) => {
+        rl.question("承認後に表示されたコードを入力してください：", async (code) => {
             rl.close();
             let token = await oAuth2Client.getToken(code);
             // tokenを保存する
