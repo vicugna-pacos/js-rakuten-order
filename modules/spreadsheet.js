@@ -1,6 +1,7 @@
 const fs = require("fs");
 const readline = require("readline");
 const {google} = require("googleapis");
+const config = require("config");
 
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];    // 読み書き可
 const TOKEN_PATH = "token.json";    // トークン保存場所
@@ -13,6 +14,7 @@ let oAuth2Client = null;    // API実行に必要な認証情報
  * token.jsonがあればそれを読込み、無ければユーザーに認証を求める。
  */
 module.exports.init = async function() {
+    // 認証
     let credentialContent = fs.readFileSync(CREDENTIALS_PATH);
     let credentials = JSON.parse(credentialContent);
     oAuth2Client = new google.auth.OAuth2(
@@ -28,6 +30,9 @@ module.exports.init = async function() {
     let token = JSON.parse(tokenContent);
     
     oAuth2Client.setCredentials(token);
+
+    // データ読込
+    await readTodo();
 };
 
 /**
@@ -48,17 +53,41 @@ function getNewToken() {
     return new Promise(function(resolve, reject) {
         rl.question("承認後に表示されたコードを入力してください：", (code) => {
             rl.close();
-            oAuth2Client.getToken(code, (err, token) => {
-                if (err) {
-                    return console.error("アクセストークン取得でエラーになりました。", err);
-                }
-
-                // tokenを保存する
-                fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
-                console.log("トークンを以下のファイルへ保存しました。", TOKEN_PATH);
-            });
+            let token = await oAuth2Client.getToken(code);
+            // tokenを保存する
+            fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
+            console.log("トークンを以下のファイルへ保存しました。", TOKEN_PATH);
         });
     
     });
 }
 
+/**
+ * 買うものリスト取得
+ */
+module.exports.getTodo = async function() {
+    return await getSheetData(config.spreadsheet.sheetname_todo);
+}
+
+/**
+ * 商品リスト取得
+ */
+module.exports.getItems = async function() {
+    return await getSheetData(config.spreadsheet.sheetname_items);
+}
+
+/**
+ * シート全体のデータを取得
+ * @param {string} sheetName 
+ */
+async function getSheetData(sheetName){
+    const sheets = google.sheets({version: "v4"});
+    const param = {
+        spreadsheetId: config.spreadsheet.id,
+        range: sheetName,
+        auth : oAuth2Client
+    };
+
+    let response = await sheets.spreadsheets.values.get(param);
+    return response.data;
+}
