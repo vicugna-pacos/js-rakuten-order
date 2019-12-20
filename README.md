@@ -37,8 +37,10 @@
         "user_id" : ""
         , "password" : ""
     }
-    , "goods" : {
-        "path" : "goods.xlsx"
+    , "spreadsheet" : {
+        "id" : "スプレッドシートのID"
+        , "sheetname_todo" : "買い物リスト"
+        , "sheetname_items" : "商品リスト"
     }
     , "chrome" : {
         "executablePath" : "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
