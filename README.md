@@ -39,8 +39,14 @@
     }
     , "spreadsheet" : {
         "id" : "スプレッドシートのID"
-        , "sheetname_todo" : "買い物リスト"
-        , "sheetname_items" : "商品リスト"
+        , "todo" : {
+            "sheetName":"買い物リスト"
+            ,"range":"A2:B"
+        }
+        , "items" : {
+            "sheetName":"商品リスト"
+            ,"range":"A2:F"
+        }
     }
     , "chrome" : {
         "executablePath" : "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
