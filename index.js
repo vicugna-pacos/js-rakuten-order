@@ -40,10 +40,6 @@ const spreadsheet = require("./modules/spreadsheet.js");
 			let founds = searchItems(todo[1], items);
 
 			for (let found in founds) {
-				//param["word"] = "ティッシュ";
-				//param["sid"] = "261122";
-				//param["units"] = 2;
-
 				let succeed = await rakuten.addCart(page, found);
 
 				if (succeed) {
@@ -57,3 +53,23 @@ const spreadsheet = require("./modules/spreadsheet.js");
 		browser.close();
 	}
 })();
+
+/**
+ * 買い物リストのキーを使って商品リストを探す
+ * 
+ * @param {string} key 
+ * @param {*} items 
+ */
+function searchItems(key, items) {
+	let result = [];
+	for (let item of items.values) {
+		if (key == item[0]) {
+			result.push({
+				"word":item[2]
+				,"sid":item[3]
+				,"units":item[5]
+			});
+		}
+	}
+	return result;
+}
