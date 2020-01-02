@@ -24,7 +24,6 @@ const gkeep = require("./modules/google_keep.js");
 		const pageKeep = await browser.newPage();
 		await gkeep.open(pageKeep);
 
-
 		//const pageRakuten = await browser.newPage();
 
 /*
