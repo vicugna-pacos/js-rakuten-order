@@ -1,7 +1,6 @@
 const puppeteer = require("puppeteer-core");
 const config = require("config");
 const rakuten = require("./modules/rakuten.js");
-const spreadsheet = require("./modules/spreadsheet.js");
 
 (async () => {
 
@@ -20,14 +19,12 @@ const spreadsheet = require("./modules/spreadsheet.js");
 	const browser = await puppeteer.launch(LAUNCH_OPTION);
 
 	try {
-		// スプレッドシートから買い物リストと商品リストを取得
-		await spreadsheet.init();
-
-		let todos = await spreadsheet.getTodo();
-		let items = await spreadsheet.getItems();
 
 		// ブラウザを起動してログイン
 		const page = await browser.newPage();
+
+/*
+
 		await rakuten.login(page);
 
 		// 買い物リストのループ
@@ -51,28 +48,10 @@ const spreadsheet = require("./modules/spreadsheet.js");
 				}
 			}
 		}
+*/
 
 	} finally {
 		browser.close();
 	}
 })();
 
-/**
- * 買い物リストのキーを使って商品リストを探す
- * 
- * @param {string} key 
- * @param {*} items 
- */
-function searchItems(key, items) {
-	let result = [];
-	for (let item of items.values) {
-		if (key == item[0]) {
-			result.push({
-				"word":item[2]
-				,"sid":item[3]
-				,"units":item[5]
-			});
-		}
-	}
-	return result;
-}
