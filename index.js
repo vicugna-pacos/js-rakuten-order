@@ -1,6 +1,7 @@
 const puppeteer = require("puppeteer-core");
 const config = require("config");
 const rakuten = require("./modules/rakuten.js");
+const gkeep = require("./modules/google_keep.js");
 
 (async () => {
 
@@ -20,8 +21,11 @@ const rakuten = require("./modules/rakuten.js");
 
 	try {
 
-		// ブラウザを起動してログイン
-		const page = await browser.newPage();
+		const pageKeep = await browser.newPage();
+		await gkeep.open(pageKeep);
+
+
+		//const pageRakuten = await browser.newPage();
 
 /*
 

@@ -42,7 +42,9 @@ Google Keep で買い物リストを作っておく。チェックリスト形�
         }
     }
     , "google_keep" : {
-        "url" : "https://keep.google.com/u/0/#LIST/xxxx"
+        "user_id" : ""
+        , "password" : ""
+        , "url" : "https://keep.google.com/u/0/#LIST/xxxx"
     }
     , "chrome" : {
         "executablePath" : "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
