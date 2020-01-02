@@ -19,7 +19,6 @@
   "dependencies": {
     "config": "^3.2.4",
     "googleapis": "^46.0.0",
-    "puppeteer-core": "^2.0.0",
-    "xlsx": "^0.15.3"
+    "puppeteer-core": "^2.0.0"
   }
 }
