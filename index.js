@@ -20,15 +20,15 @@ const spreadsheet = require("./modules/spreadsheet.js");
 	const browser = await puppeteer.launch(LAUNCH_OPTION);
 
 	try {
-		// スプレッドシートから買い物リストと商品リストを取得
+
+		// スプレッドシートから買い物リストを取得
 		await spreadsheet.init();
-
 		let todos = await spreadsheet.getTodo();
-		let items = await spreadsheet.getItems();
 
-		// ブラウザを起動してログイン
+		// ブラウザを起動してログイン＆お気に入りリスト取得
 		const page = await browser.newPage();
 		await rakuten.login(page);
+		let bookmarks = await rakuten.getBookmarks(page);
 
 		// 買い物リストのループ
 		for (let todoIndex = 0; todoIndex < todos.values.length; todoIndex++) {
@@ -39,15 +39,14 @@ const spreadsheet = require("./modules/spreadsheet.js");
 			}
 
 			// 商品リストを探す
-			let founds = searchItems(todo[1], items);
+			let found = searchBookmark(todo[1], bookmarks);
 
-			for (let found of founds) {
+			if (found != null) {
 				let succeed = await rakuten.addCart(page, found);
 
 				if (succeed) {
-					// TODO 完了にする
+					// 完了にする
 					await spreadsheet.updateTodo(todoIndex);
-					break;
 				}
 			}
 		}
@@ -58,21 +57,15 @@ const spreadsheet = require("./modules/spreadsheet.js");
 })();
 
 /**
- * 買い物リストのキーを使って商品リストを探す
- * 
+ * お気に入りリストから、指定したキーを持つものを探す
  * @param {string} key 
- * @param {*} items 
+ * @param {{key:string, url:string}} bookmarks 
  */
-function searchItems(key, items) {
-	let result = [];
-	for (let item of items.values) {
-		if (key == item[0]) {
-			result.push({
-				"word":item[2]
-				,"sid":item[3]
-				,"units":item[5]
-			});
+function searchBookmark(key, bookmarks) {
+	for (let bookmark of bookmarks) {
+		if (key == bookmark.key) {
+			return bookmark;
 		}
 	}
-	return result;
+	return null;
 }

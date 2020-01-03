@@ -68,13 +68,6 @@ module.exports.getTodo = async function() {
 }
 
 /**
- * 商品リスト取得
- */
-module.exports.getItems = async function() {
-    return await getSheetData(config.spreadsheet.items.sheetName);
-}
-
-/**
  * シート全体のデータを取得
  * @param {string} sheetName 
  */
