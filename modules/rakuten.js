@@ -8,20 +8,25 @@ const LOGIN_URL = "https://grp01.id.rakuten.co.jp/rms/nid/vc?__event=login&servi
  */
 module.exports.login = async function(page) {
     await page.goto(LOGIN_URL, {waitUntil:"domcontentloaded"});
+    await page.waitForSelector("#loginInner_u",{"visible":true});
+    await page.waitForSelector("#loginInner_p",{"visible":true});
 
     // IDとパスワードを入力する
     await page.type("#loginInner_u", config.rakuten.user_id, {delay:50});
     await page.type("#loginInner_p", config.rakuten.password, {delay:50});
 
     // ログインボタンを押す
-    await page.click("input[name=submit].loginButton");
+    await Promise.all([
+        page.waitForNavigation({"waitUntil":"domcontentloaded"}),
+        page.click("input[name=submit].loginButton")
+    ]);
     await page.waitFor(1000);
 };
 
 /**
- * お気に入りリストから、メモ欄と購入ページへのURLを取得する
+ * お気に入りリストから、メモ欄と商品ページへのURLを取得する
  * 
- * @returns {{key:string, url:string}}
+ * @returns {{key:string, units:number, url:string}}
  */
 module.exports.getBookmarks = async function(page) {
     let result = [];
@@ -33,22 +38,36 @@ module.exports.getBookmarks = async function(page) {
         let containers = await page.$$("#bookmark-main div.Collapsible");
 
         for (let container of containers) {
+            let bookmark = {"key":null, "units":1, "url":null};
+
             // メモ欄取得
             let memoArea = await container.$("div[class*=memoLeft]");
-            let memo = null;
             if (memoArea != null) {
-                memo = await memoArea.evaluate((node) => node.innerText);
+                let memo = await memoArea.evaluate((node) => node.innerText);
+
+                try {
+                    let obj = JSON.parse(memo);
+                    if (obj["key"]) {
+                        bookmark.key = obj.key;
+                    }
+                    if (obj["units"]) {
+                        bookmark.units = obj.units;
+                    }
+                } catch (e) {
+                }
+                if (bookmark.key == null) {
+                    bookmark.key = memo;
+                }
             }
 
             // 購入ページへのリンク取得
-            let linkArea = await container.$("a[class*=cartBtn]");
-            let url = null;
+            let linkArea = await container.$("p[class*=title] > a");
             if (linkArea != null) {
-                url = await linkArea.evaluate((node) => node.href);
+                bookmark.url = await linkArea.evaluate((node) => node.href);
             }
 
-            if (memo != null && url != null) {
-                result.push({"key":memo, "url":url});
+            if (bookmark.key != null && bookmark.url != null) {
+                result.push(bookmark);
             }
 
         }
@@ -72,12 +91,26 @@ module.exports.getBookmarks = async function(page) {
  * カートに追加
  * 
  * @param page puppeteerのPageオブジェクト
- * @param {{key:string, url:string}} param カートに入れたい商品の情報
+ * @param {{key:string, units:number, url:string}} param カートに入れたい商品の情報
  */
 module.exports.addCart = async function(page, param) {
 
     try {
+        // 商品ページへ行く
         await page.goto(param.url, {waitUntil:"domcontentloaded"});
+        await page.waitForSelector("select[name=units]", {"visible":true});
+        await page.waitForSelector("button.cart-button.add-cart", {"visible":true});
+        await page.waitFor(1000);
+
+        // 数量の選択
+        if (param.units > 1) {
+            await page.select("select[name=units]", String(param.units));
+        }
+
+        // 注文を押す
+        await page.click("button.cart-button.add-cart");
+        // カートに追加しました　が出るまで待つ
+        await page.waitForSelector("div.add-cart-success", {visible:true});
         await page.waitFor(1000);
 
     } catch(e) {

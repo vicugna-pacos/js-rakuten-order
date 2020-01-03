@@ -30,6 +30,9 @@ const spreadsheet = require("./modules/spreadsheet.js");
 		await rakuten.login(page);
 		let bookmarks = await rakuten.getBookmarks(page);
 
+		console.log("=== bookmarks ===")
+		console.log(bookmarks);
+
 		// 買い物リストのループ
 		for (let todoIndex = 0; todoIndex < todos.values.length; todoIndex++) {
 			let todo = todos.values[todoIndex];
@@ -59,7 +62,7 @@ const spreadsheet = require("./modules/spreadsheet.js");
 /**
  * お気に入りリストから、指定したキーを持つものを探す
  * @param {string} key 
- * @param {{key:string, url:string}} bookmarks 
+ * @param {{key:string, units:number, url:string}} bookmarks 
  */
 function searchBookmark(key, bookmarks) {
 	for (let bookmark of bookmarks) {
