@@ -67,3 +67,53 @@ module.exports.login = async function(page) {
     await page.click("input[name=submit].loginButton");
     await page.waitFor(1000);
 };
+
+/**
+ * お気に入りリストから、メモ欄と購入ページへのURLを取得する
+ * 
+ * @returns {{key:string, url:string}}
+ */
+module.exports.getBookmarks = async function(page) {
+    let result = [];
+    await page.goto(config.rakuten.bookmark.url, {waitUntil:"domcontentloaded"});
+
+    while (true) {
+        await page.waitForSelector("#bookmark-main div.Collapsible", {"visible":true});
+        await page.waitFor(1000);
+        let containers = await page.$$("#bookmark-main div.Collapsible");
+
+        for (let container of containers) {
+            // メモ欄取得
+            let memoArea = await container.$("div[class*=memoLeft]");
+            let memo = null;
+            if (memoArea != null) {
+                memo = await memoArea.evaluate((node) => node.innerText);
+            }
+
+            // 購入ページへのリンク取得
+            let linkArea = await container.$("a[class*=cartBtn]");
+            let url = null;
+            if (linkArea != null) {
+                url = await linkArea.evaluate((node) => node.href);
+            }
+
+            if (memo != null && url != null) {
+                result.push({"key":memo, "url":url});
+            }
+
+        }
+
+        // 次ページ
+        let nextBtn = await page.$("a[class*=nextPageBtn]");
+        if (nextBtn == null) {
+            break;
+        }
+
+        await Promise.all([
+            page.waitForNavigation({waitUntil:"domcontentloaded"}),
+            nextBtn.click()
+        ]);
+    }
+
+    return result;
+};
