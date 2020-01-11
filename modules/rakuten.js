@@ -49,7 +49,8 @@ module.exports.getBookmarks = async function(page) {
 
             // 購入ページへのリンク取得
             let linkArea = await container.$("p[class*=title] > a");
-            if (linkArea != null) {
+            const soldout = await container.waitForSelector("span[class*=soldOutTxt]", {"visible":true, "timeout":0});
+            if (linkArea != null && soldout == null) {
                 bookmark.url = await linkArea.evaluate((node) => node.href);
             }
 
@@ -130,7 +131,14 @@ module.exports.addCart = async function(page, param) {
         }
 
         // 注文を押す
-        await page.click("button.cart-button.add-cart");
+        const addcart_selector = "button.cart-button.add-cart";
+        const addcart_button = await page.$(addcart_selector);
+        if (addcart_button == null) {
+            console.log("購入できない状態");
+            return false;
+        }
+        await page.click(addcart_selector);
+        
         // カートに追加しました　が出るまで待つ
         await page.waitForSelector("div.add-cart-success", {"visible":true});
         await page.waitFor(1000);
