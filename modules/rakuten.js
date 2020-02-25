@@ -20,7 +20,7 @@ module.exports.login = async function(page) {
         page.waitForNavigation({"waitUntil":"domcontentloaded"}),
         page.click("input[name=submit].loginButton")
     ]);
-    await page.waitFor(1000);
+    await page.waitFor(2000);
 };
 
 /**
@@ -34,7 +34,7 @@ module.exports.getBookmarks = async function(page) {
 
     while (true) {
         await page.waitForSelector("#bookmark-main div.Collapsible", {"visible":true});
-        await page.waitFor(1000);
+        await page.waitFor(2000);
         let containers = await page.$$("#bookmark-main div.Collapsible");
 
         for (let container of containers) {
@@ -119,6 +119,7 @@ module.exports.addCart = async function(page, param) {
     try {
         // 商品ページへ行く
         await page.goto(param.url, {waitUntil:"domcontentloaded"});
+        await page.waitFor(2000);
 
         await Promise.all([
             page.waitForSelector("select[name=units]", {"visible":true})
