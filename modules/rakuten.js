@@ -49,7 +49,7 @@ module.exports.getBookmarks = async function(page) {
 
             // 購入ページへのリンク取得
             let linkArea = await container.$("p[class*=title] > a");
-            const soldout = await container.waitForSelector("span[class*=soldOutTxt]", {"visible":true, "timeout":0});
+            const soldout = await container.$("span[class*=soldOutTxt]");
             if (linkArea != null && soldout == null) {
                 bookmark.url = await linkArea.evaluate((node) => node.href);
             }
