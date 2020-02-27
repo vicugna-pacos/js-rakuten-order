@@ -10,10 +10,11 @@ module.exports.login = async function(page) {
     await page.goto(LOGIN_URL, {waitUntil:"domcontentloaded"});
     await page.waitForSelector("#loginInner_u",{"visible":true});
     await page.waitForSelector("#loginInner_p",{"visible":true});
+    await page.waitFor(2000);
 
     // IDとパスワードを入力する
-    await page.type("#loginInner_u", config.rakuten.user_id, {delay:50});
-    await page.type("#loginInner_p", config.rakuten.password, {delay:50});
+    await page.type("#loginInner_u", config.rakuten.user_id);
+    await page.type("#loginInner_p", config.rakuten.password);
 
     // ログインボタンを押す
     await Promise.all([
@@ -34,7 +35,6 @@ module.exports.getBookmarks = async function(page) {
 
     while (true) {
         await page.waitForSelector("#bookmark-main div.Collapsible", {"visible":true});
-        await page.waitFor(2000);
         let containers = await page.$$("#bookmark-main div.Collapsible");
 
         for (let container of containers) {
@@ -70,6 +70,7 @@ module.exports.getBookmarks = async function(page) {
             page.waitForNavigation({waitUntil:"domcontentloaded"}),
             nextBtn.click()
         ]);
+        await page.waitFor(2000);
     }
 
     return result;
@@ -141,8 +142,9 @@ module.exports.addCart = async function(page, param) {
         await page.click(addcart_selector);
         
         // カートに追加しました　が出るまで待つ
-        await page.waitForSelector("div.add-cart-success", {"visible":true});
-        await page.waitFor(1000);
+        // ※↑を待つと妙に遅いので、3秒待つ
+        //await page.waitForSelector("div.add-cart-success", {"visible":true});
+        await page.waitFor(3000);
 
     } catch(e) {
         console.log(e);
