@@ -25,13 +25,14 @@ const spreadsheet = require("./modules/spreadsheet.js");
 		await spreadsheet.init();
 		let todos = await spreadsheet.getTodo();
 
-		// ブラウザを起動してログイン＆お気に入りリスト取得
+		// ブラウザを起動してログイン
 		const page = await browser.newPage();
 		await rakuten.login(page);
-		let bookmarks = await rakuten.getBookmarks(page);
 
-		console.log("=== bookmarks ===")
-		console.log(bookmarks);
+		// お気に入りを開く
+		await rakuten.openBookMark(page);
+
+		let first = true;
 
 		// 買い物リストのループ
 		for (let todoIndex = 0; todoIndex < todos.values.length; todoIndex++) {
@@ -41,16 +42,19 @@ const spreadsheet = require("./modules/spreadsheet.js");
 				continue;
 			}
 
+			if (first) {
+				first = false;
+			} else {
+				// 1ページ目へ戻る
+				await rakuten.gotoFirstPage(page);
+			}
+
 			// 商品リストを探す
-			let found = searchBookmark(todo[1], bookmarks);
+			let succeed = await rakuten.searchBookmark(browser, page, todo[1]);
 
-			if (found != null) {
-				let succeed = await rakuten.addCart(page, found);
-
-				if (succeed) {
-					// 完了にする
-					await spreadsheet.updateTodo(todoIndex);
-				}
+			if (succeed) {
+				// 完了にする
+				await spreadsheet.updateTodo(todoIndex);
 			}
 		}
 
@@ -59,16 +63,22 @@ const spreadsheet = require("./modules/spreadsheet.js");
 	}
 })();
 
-/**
- * お気に入りリストから、指定したキーを持つものを探す
- * @param {string} key 
- * @param {{key:string, units:number, url:string}} bookmarks 
- */
-function searchBookmark(key, bookmarks) {
-	for (let bookmark of bookmarks) {
-		if (key == bookmark.key) {
-			return bookmark;
-		}
-	}
-	return null;
+async function test(browser, page) {
+	await page.goto("https://www.rakuten.co.jp/", {waitUntil:"domcontentloaded"});
+	await page.waitFor(2000);
+
+	// Ctrlキーを押す(ControlRight)でもOK)
+	await page.keyboard.down("ControlLeft");
+	// リンクを押す
+	await page.click("a[sc_linkname=\"grayheader01\"]");
+	// Ctrlキーを話す
+	await page.keyboard.up("ControlLeft");
+	
+	// 開いたタブを最前面にする
+	const pages = await browser.pages();
+	const newPage = pages[pages.length-1];
+	await newPage.bringToFront();
+
+	await page.waitFor(10000);
+
 }
