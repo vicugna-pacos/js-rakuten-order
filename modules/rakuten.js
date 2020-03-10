@@ -66,7 +66,7 @@ module.exports.openBookMark = async function(page) {
     await page.waitFor(3000);
 
     // 並び順を「登録日時が古い順」へ変える
-    await page.select("span[class*=sortSelector] select");
+    await page.select("span[class*=sortSelector] select", "2");
     await page.waitFor(3000);
 };
 
@@ -200,6 +200,10 @@ async function addCart(browser, page, container, param) {
         }
 
         await page.waitFor(3000);
+
+        // リンクの場所までスクロールしてもだめだった
+        // await link.hover();
+        // await page.waitFor(3000);
         
         // Ctrlキーを押す(ControlRight)でもOK)
         await page.keyboard.down("ControlLeft");
