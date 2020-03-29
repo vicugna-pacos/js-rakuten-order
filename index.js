@@ -27,6 +27,12 @@ const spreadsheet = require("./modules/spreadsheet.js");
 
 		// ブラウザを起動してログイン＆お気に入りリスト取得
 		const page = await browser.newPage();
+
+		await page.evaluateOnNewDocument(() => {
+			Object.defineProperty(navigator, 'webdriver', ()=>{});
+			delete navigator.__proto__.webdriver;
+		});
+
 		await rakuten.login(page);
 		let bookmarks = await rakuten.getBookmarks(page);
 
