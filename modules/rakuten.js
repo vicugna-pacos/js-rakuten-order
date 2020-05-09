@@ -54,6 +54,15 @@ module.exports.getBookmarks = async function(page) {
                 bookmark.url = await linkArea.evaluate((node) => node.href);
             }
 
+            // 「最新の情報ではありません」が表示されている場合は、取り込まない
+            const oldFlags = await container.$x(".//a[contains(text(), \"最新の情報ではありません\")]");
+            if (oldFlags.length > 0) {
+                if (bookmark.key != null) {
+                    console.log("key:" + bookmark.key + "  最新の情報ではありません");
+                }
+                continue;
+            }
+
             if (bookmark.key != null && bookmark.url != null) {
                 result.push(bookmark);
             }
