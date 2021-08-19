@@ -10,7 +10,7 @@ const spreadsheet = require("./modules/spreadsheet.js");
 
 	let LAUNCH_OPTION = {
 		headless: false
-		, executablePath: "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
+		, executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe"
 	};
 
 	if (config["chrome"] && config["chrome"]["executablePath"] && config["chrome"]["executablePath"] != "") {
