@@ -1,8 +1,8 @@
 # 機能概要
 
-買い物リストを読み込んで、楽天市場のお気に入りリストを検索しながら買いたいものをカートに入れるスクリプト。
+Google スプレッドシートで作った買い物リストを読み込み、楽天市場のお気に入りリストに登録した商品をカートに入れるスクリプト。
 
-GoogleスプレッドシートはSheets APIでアクセスする。楽天市場へはpuppeteerを使用してブラウザを操作してアクセスする。
+Google スプレッドシートは Sheets APIでアクセスする。楽天市場へはpuppeteerを使用してブラウザを操作してアクセスする。
 
 1. Google スプレッドシートで作成しておいた買い物リストを読み込む。
 1. 楽天市場にログインする。
@@ -17,8 +17,9 @@ GoogleスプレッドシートはSheets APIでアクセスする。楽天市場�
 # 準備
 
 ## 設定ファイルを作成する
+config/default.json を作成する。
 
-```json:config/default.json
+```json
 {
     "rakuten" : {
         "user_id" : ""
@@ -35,7 +36,7 @@ GoogleスプレッドシートはSheets APIでアクセスする。楽天市場�
         }
     }
     , "chrome" : {
-        "executablePath" : "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
+        "executablePath" : "C:/Program Files/Google/Chrome/Application/chrome.exe"
     }
 }
 ```
@@ -58,15 +59,8 @@ Google スプレッドシートにはSheets APIを使用してアクセスする
 
 ![](doc/image-03.png)
 
-メモ欄には単純に「柔軟剤」と書いても良いが、JSON形式で書けるようにもしている。その場合の書き方は以下の通り：
-
-* `key` - 買い物リストと結びつける名前
-* `units` - カートに入れる数。省略可能。既定値：1。
-
-![](doc/image-04.png)
-
 
 # 買い物リストがGoogle スプレッドシートである理由
 リストをあらかじめ作成しておき、必要なものにチェックマークを付ける方式で運用したかったため。
-Googleであれば、Keepに似たような機能があるが、KeepにはAPIが存在しない。それではとpuppeteerでアクセスも試したが、botと感知されるせいかログインができなかったため、不採用とした。
+Googleであれば、Keepに似たような機能があるが、KeepにはAPIが存在しない。puppeteerでアクセスも試したが、botと感知されるせいかログインができなかったため、不採用とした。
 そのほかのサービスについては、このためだけに会員登録することは避けたかったため試行さえもしていない。
